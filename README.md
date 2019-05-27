@@ -24,3 +24,19 @@ config:
       namespace: "data-sync"
       interval: "1d"
 ```
+### Usage
+* Install python requirements from requirements.txt file
+  * `virtualenv .venv; pip install -r requirements.txt`
+* Run make "all" target to create docker container and template k8s manifests
+  * `make all`
+* Review and apply k8s manifests
+  * `kubectl apply -f tmp-k8s/ #Example output below`
+
+```bash
+$ kubectl apply -f tmp-k8s/
+ clusterrole.rbac.authorization.k8s.io/delete-pods created
+ clusterrolebinding.rbac.authorization.k8s.io/pod-terminator created
+ configmap/pod-terminator created
+ deployment.apps/pod-terminator created
+ serviceaccount/pod-terminator created
+```
