@@ -1,6 +1,6 @@
 # pod-terminator
 
-Deletes pods at intervals
+Deletes kubernetes pods by selector at chosen intervals 
 
 ## Configuration
 
