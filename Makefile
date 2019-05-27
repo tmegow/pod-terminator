@@ -3,7 +3,7 @@ shorthash=`git rev-parse --short HEAD`
 base=tmegow/$(repo)
 image=$(base):$(shorthash)
 
-all: build-image template-k8s-manifests
+all: build-image template
 
 build-image:
 	docker build -t $(image) .
