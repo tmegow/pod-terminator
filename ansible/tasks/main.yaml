@@ -1,0 +1,35 @@
+- hosts: localhost
+  connection: local
+  tasks:
+  - name: check if there is a vars folder
+    stat:
+      path: "{{ playbook_dir }}/../../k8s/vars"
+    register: stat_result
+
+  - name: include vars
+    include_vars:
+      dir: "{{ playbook_dir }}/../../k8s/vars"
+    when: stat_result.stat.exists == True
+
+  - name: delete tmp-k8s/ if exists
+    file:
+      path: "{{ playbook_dir }}/../../tmp-k8s"
+      state: absent
+
+  - name: make tmp-k8s/ dir
+    file:
+      dest: "{{ playbook_dir }}/../../tmp-k8s/"
+      state: directory
+
+  - name: apply jinja templates
+    template:
+      src: "{{ item }}"
+      dest: "{{ playbook_dir }}/../../tmp-k8s/{{ item | basename | replace('.j2', '') }}"
+      mode: 0600
+    with_fileglob:
+      - "{{ playbook_dir }}/../../k8s/templates/*.j2"
+
+  - name: Copy file with owner and permissions
+    copy:
+      src: "{{ playbook_dir }}/../../k8s/manifests/"
+      dest: "{{ playbook_dir }}/../../tmp-k8s/"

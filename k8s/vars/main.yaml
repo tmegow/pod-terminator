@@ -1,0 +1,13 @@
+---
+# Selector supports multiple values
+# Interval defaults to seconds, yet also supports formatting like 1m, 6h, 2d
+config:
+  targets:
+    - selector:
+        app: "hello-kubernetes"
+      namespace: "default"
+      interval: "30m"
+    - selector:
+        name: "pod-name-to-be-deleted"
+      namespace: "default"
+      interval: "3h"

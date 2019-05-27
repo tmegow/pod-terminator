@@ -1,0 +1,13 @@
+{% macro pod_terminator_configmap() %}
+---
+apiVersion: v1
+data:
+  manifest.json: |
+{{ config | to_nice_json | indent(width=5,first=true,blank=true) }}
+kind: ConfigMap
+metadata:
+  name: pod-terminator
+  namespace: default
+{% endmacro %}
+{{ pod_terminator_configmap() }}
+

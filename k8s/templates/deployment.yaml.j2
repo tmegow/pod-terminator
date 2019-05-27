@@ -1,0 +1,51 @@
+{% macro pod_terminator_deploy(mem_request=50, mem_limit=100, cpu_request=100, cpu_limit=200) %}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+  labels:
+    role: pod-terminator
+  name: pod-terminator
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: pod-terminator
+  template:
+    metadata:
+      labels:
+        role: pod-terminator
+      name: pod-terminator
+    spec:
+      containers:
+      - image: tmegow/pod-terminator:latest
+        env:
+        - name: SERVICE_TOKEN_FILENAME
+          value: "/var/run/secrets/kubernetes.io/serviceaccount/token"
+        - name: SERVICE_CERT_FILENAME
+          value: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+        imagePullPolicy: Always
+        name: pod-terminator
+        volumeMounts:
+        - name: manifest
+          mountPath: "/opt/"
+        resources:
+          limits:
+            cpu: "{{ cpu_limit }}m"
+            memory: "{{ mem_limit }}Mi"
+          requests:
+            cpu: "{{ cpu_request }}m"
+            memory: "{{ mem_request }}Mi"
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      volumes:
+      - name: manifest
+        configMap:
+          name: pod-terminator
+      serviceAccount: pod-terminator
+      serviceAccountName: pod-terminator
+      terminationGracePeriodSeconds: 30
+{% endmacro %}
+{{ pod_terminator_deploy(mem_request=50, mem_limit=100, cpu_request=100, cpu_limit=200) }}
